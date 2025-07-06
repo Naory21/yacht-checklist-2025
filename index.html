@@ -154,6 +154,7 @@ items.forEach((text, index) => {
   topRow.appendChild(checkbox);
   row.appendChild(topRow);
 
+
   // Text input
   const input = document.createElement('input');
   input.type = 'text';
@@ -203,15 +204,51 @@ select.appendChild(placeholder);
   fileInput.accept = 'image/*';
   fileInput.className = 'mt-2';
 
-  const imgPreview = document.createElement('img');
-  imgPreview.className = 'mt-2 max-h-40 rounded';
-  imgPreview.alt = 'תמונה של הבעיה';
+const previewWrapper = document.createElement('div');
+previewWrapper.className = 'mt-2 space-y-2';
 
-  const savedImg = localStorage.getItem(checkboxId + '-img');
-  if (savedImg) {
-    imgPreview.src = savedImg;
-    row.appendChild(imgPreview);
-  }
+// Create image preview
+const imgPreview = document.createElement('img');
+imgPreview.className = 'max-h-40 rounded border';
+imgPreview.alt = 'תמונה של הבעיה';
+imgPreview.style.display = 'none';
+
+// Create link to open image in full screen
+const link = document.createElement('a');
+link.target = '_blank';
+link.innerText = 'פתח תמונה';
+link.className = 'block text-blue-700 underline text-sm';
+link.style.display = 'none';
+
+const savedImg = localStorage.getItem(checkboxId + '-img');
+if (savedImg) {
+  imgPreview.src = savedImg;
+  imgPreview.style.display = 'block';
+  link.href = savedImg;
+  link.style.display = 'block';
+}
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const result = reader.result;
+    localStorage.setItem(checkboxId + '-img', result);
+    imgPreview.src = result;
+    imgPreview.style.display = 'block';
+    link.href = result;
+    link.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+previewWrapper.appendChild(imgPreview);
+previewWrapper.appendChild(link);
+row.appendChild(fileInput);
+row.appendChild(previewWrapper);
+
 
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];

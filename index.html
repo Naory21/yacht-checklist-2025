@@ -147,6 +147,33 @@
     });
   </script>
 
+<div class="max-w-4xl mx-auto mt-12 bg-white rounded-xl shadow-md p-6">
+  <h2 class="text-xl font-bold text-blue-800 mb-4">הערות חופשיות</h2>
+  <textarea id="notes" class="w-full h-48 p-3 border rounded resize-y" placeholder="כתוב כאן הערות או תובנות..."></textarea>
+  <button onclick="saveNotes()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+    שמור הערות
+  </button>
+</div>
+
+<script>
+  const notesBox = document.getElementById('notes');
+  const savedNotes = localStorage.getItem('yacht_notes');
+  if (savedNotes) {
+    notesBox.value = savedNotes;
+  }
+
+  function saveNotes() {
+    localStorage.setItem('yacht_notes', notesBox.value);
+    alert('ההערות נשמרו!');
+  }
+</script>
+
+
+
+
+
+
+
 <div class="relative max-w-4xl mx-auto mt-12">
   <img id="yacht-image" src="https://searadar.com/uploads/boats/crop/1000/1000/12d/4b/38411-884087-sunsail-454l.jpg" alt="Yacht Layout" class="w-full block" />
   <canvas id="drawing-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>

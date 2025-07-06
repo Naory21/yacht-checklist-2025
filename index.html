@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -126,32 +127,64 @@
       sectionDiv.appendChild(title);
 
 items.forEach((text, index) => {
+  const checkboxId = `${section}-${index}`;
+  
   const row = document.createElement('div');
-  row.className = 'flex items-center justify-between border-b py-2';
+  row.className = 'border-b py-4';
+
+  const topRow = document.createElement('div');
+  topRow.className = 'flex flex-row-reverse items-center justify-between gap-2';
 
   const label = document.createElement('label');
-  label.className = 'text-right ml-4';
+  label.className = 'text-right font-medium w-full';
   label.innerText = text;
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.className = 'toggle toggle-success transform scale-125';
-
-  // Assign a unique ID
-  const checkboxId = `${section}-${index}`;
+  checkbox.className = 'toggle toggle-success';
+  checkbox.style.setProperty('width', '3rem');
+  checkbox.style.setProperty('height', '1.5rem');
   checkbox.id = checkboxId;
 
-  // Restore saved state
   const saved = localStorage.getItem(checkboxId);
   if (saved === 'true') checkbox.checked = true;
 
-  // Save on change
   checkbox.addEventListener('change', () => {
     localStorage.setItem(checkboxId, checkbox.checked);
   });
 
-  row.appendChild(label);
-  row.appendChild(checkbox);
+  topRow.appendChild(checkbox);
+  topRow.appendChild(label);
+  row.appendChild(topRow);
+
+  // Free text input
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'הערה חופשית';
+  input.className = 'w-full mt-2 p-2 border rounded';
+  const savedText = localStorage.getItem(checkboxId + '-note');
+  if (savedText) input.value = savedText;
+  input.addEventListener('input', () => {
+    localStorage.setItem(checkboxId + '-note', input.value);
+  });
+  row.appendChild(input);
+
+  // Status dropdown
+  const select = document.createElement('select');
+  select.className = 'mt-2 w-full p-2 border rounded';
+  ['בחר סטטוס', 'תקין🟢', 'לא תקין 🔴', 'בעיה - תיאור⚠️'].forEach(optionText => {
+    const option = document.createElement('option');
+    option.value = optionText;
+    option.innerText = optionText;
+    select.appendChild(option);
+  });
+
+  const savedStatus = localStorage.getItem(checkboxId + '-status');
+  if (savedStatus) select.value = savedStatus;
+  select.addEventListener('change', () => {
+    localStorage.setItem(checkboxId + '-status', select.value);
+  });
+  row.appendChild(select);
 
   sectionDiv.appendChild(row);
 });

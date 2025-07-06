@@ -179,7 +179,7 @@
   <canvas id="drawing-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
 </div>
 
-<button onclick="ctx.clearRect(0, 0, canvas.width, canvas.height)" class="block mx-auto mt-4 px-4 py-2 bg-red-600 text-white rounded">
+<button onclick="clearDrawing()" class="block mx-auto mt-4 px-4 py-2 bg-red-600 text-white rounded">
   נקה ציור
 </button>
 
@@ -191,6 +191,14 @@
   function resizeCanvas() {
     canvas.width = img.clientWidth;
     canvas.height = img.clientHeight;
+
+    // Reload saved image when resizing
+    const savedImage = localStorage.getItem("yacht_canvas_drawing");
+    if (savedImage) {
+      const image = new Image();
+      image.onload = () => ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      image.src = savedImage;
+    }
   }
 
   img.onload = resizeCanvas;
@@ -198,7 +206,6 @@
 
   let drawing = false;
 
-  // Helper to get X/Y from mouse or touch
   function getXY(e) {
     const rect = canvas.getBoundingClientRect();
     if (e.touches) {
@@ -216,27 +223,38 @@
 
   function draw(e) {
     if (!drawing) return;
-    e.preventDefault(); // prevent scrolling
+    e.preventDefault();
     const { x, y } = getXY(e);
     ctx.fillStyle = "red";
     ctx.beginPath();
     ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
     ctx.fill();
+    saveDrawing(); // save each time you draw
   }
 
-  // Mouse
+  function saveDrawing() {
+    const dataURL = canvas.toDataURL();
+    localStorage.setItem("yacht_canvas_drawing", dataURL);
+  }
+
+  function clearDrawing() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    localStorage.removeItem("yacht_canvas_drawing");
+  }
+
   canvas.addEventListener("mousedown", () => (drawing = true));
   canvas.addEventListener("mouseup", () => (drawing = false));
   canvas.addEventListener("mouseout", () => (drawing = false));
   canvas.addEventListener("mousemove", draw);
 
-  // Touch
   canvas.addEventListener("touchstart", () => (drawing = true));
   canvas.addEventListener("touchend", () => (drawing = false));
   canvas.addEventListener("touchcancel", () => (drawing = false));
   canvas.addEventListener("touchmove", draw);
-</script>
 
+  // Expose clear function for button
+  window.clearDrawing = clearDrawing;
+</script>
 
 
 </body>

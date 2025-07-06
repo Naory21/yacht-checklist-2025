@@ -198,21 +198,43 @@
 
   let drawing = false;
 
-  canvas.addEventListener("mousedown", () => (drawing = true));
-  canvas.addEventListener("mouseup", () => (drawing = false));
-  canvas.addEventListener("mouseout", () => (drawing = false));
-
-  canvas.addEventListener("mousemove", (e) => {
-    if (!drawing) return;
+  // Helper to get X/Y from mouse or touch
+  function getXY(e) {
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    if (e.touches) {
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top
+      };
+    } else {
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+  }
 
+  function draw(e) {
+    if (!drawing) return;
+    e.preventDefault(); // prevent scrolling
+    const { x, y } = getXY(e);
     ctx.fillStyle = "red";
     ctx.beginPath();
     ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
     ctx.fill();
-  });
+  }
+
+  // Mouse
+  canvas.addEventListener("mousedown", () => (drawing = true));
+  canvas.addEventListener("mouseup", () => (drawing = false));
+  canvas.addEventListener("mouseout", () => (drawing = false));
+  canvas.addEventListener("mousemove", draw);
+
+  // Touch
+  canvas.addEventListener("touchstart", () => (drawing = true));
+  canvas.addEventListener("touchend", () => (drawing = false));
+  canvas.addEventListener("touchcancel", () => (drawing = false));
+  canvas.addEventListener("touchmove", draw);
 </script>
 
 

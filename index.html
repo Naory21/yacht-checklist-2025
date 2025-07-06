@@ -181,7 +181,7 @@ placeholder.innerText = 'בחר סטטוס';
 select.appendChild(placeholder);
 
 // Add actual options
-['תקין', 'לא תקין', 'בעיה - תיאור'].forEach(optionText => {
+['תקין🟢', 'לא תקין🔴', 'בעיה - תיאור⚠️'].forEach(optionText => {
   const option = document.createElement('option');
   option.value = optionText;
   option.innerText = optionText;

@@ -16,7 +16,7 @@
   <script>
     const checklist = {
       "מקרר": [
-        "הדבר הראשון - לבדוק שהוא מקרר ומאוורר, זכרו לחזור אליו בתום התהליך כדי לוודא שהוא אכן מקרר."
+        " לבדוק שהוא מקרר ומאוורר, זכרו לחזור אליו בתום התהליך כדי לוודא שהוא אכן מקרר."
       ],
       "חשמל": [
         "הכרת מיקום המצברים.",
@@ -73,7 +73,7 @@
       ],
       "ציוד ימאות": [
         "וודאו שקיימת תיקיה עם מסמכי הספינה: רישיון, ביטוח, מפרט וכו' (לא ניתן לצאת מהמרינה ללא תיקייה זו, נדרש להציגה בכל מעגנה בה נעגון).",
-        "בדיקת הימצאות כל ציוד הבטיחות ומה שצריך תקין ובתוקף: עוגן רזרבי, גנץ', ידיות וינץ', הגה חירום, רתמות בטיחות, חגורות הצלה, ערכת כלים בסיסית, סימני יום, דגלי קוד, חלקי חילוף, פנס, שנורקל ומסיכה (לא קיים בכל חברה), ערכת עזרה ראשונה, מטפי כיבוי אש ושמיכת כיבוי.",
+        "בדיקת הימצאות כל ציוד הבטיחות ומה שצריך תקין ובתוקף:", "עוגן רזרבי", "גנץ'", "ידיות וינץ'", "הגה חירום", "רתמות בטיחות", "חגורות הצלה", "ערכת כלים בסיסית", "סימני יום", "דגלי קוד", "חלקי חילוף", "פנס", "שנורקל ומסיכה (לא קיים בכל חברה)", "ערכת עזרה ראשונה, מטפי כיבוי אש ושמיכת כיבוי.",
         "וודאו שיש לפחות 4 חבלי התקשרות (קצרים לרציפים וארוכים לעגינה ים תיכונית): מיקום חבלי התקשרות באורך 20 מטר, מיקום חבל התקשרות 50 מטר.",
         "וודאו כי חגורות ההצלה נגישות, הרפסודה תקינה ומאובטחת ואתם יודעים כיצד להפעיל אותה במקרה חירום.",
         "צינור מים + מחבר לברז – למילוי מיכלי מים ושטיפת סיפון.",
@@ -146,5 +146,49 @@
       container.appendChild(sectionDiv);
     });
   </script>
+
+<div class="relative max-w-4xl mx-auto mt-12">
+  <img id="yacht-image" src="https://searadar.com/uploads/boats/crop/1000/1000/12d/4b/38411-884087-sunsail-454l.jpg" alt="Yacht Layout" class="w-full block" />
+  <canvas id="drawing-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+</div>
+
+<button onclick="ctx.clearRect(0, 0, canvas.width, canvas.height)" class="block mx-auto mt-4 px-4 py-2 bg-red-600 text-white rounded">
+  נקה ציור
+</button>
+
+<script>
+  const canvas = document.getElementById("drawing-canvas");
+  const img = document.getElementById("yacht-image");
+  const ctx = canvas.getContext("2d");
+
+  function resizeCanvas() {
+    canvas.width = img.clientWidth;
+    canvas.height = img.clientHeight;
+  }
+
+  img.onload = resizeCanvas;
+  window.onresize = resizeCanvas;
+
+  let drawing = false;
+
+  canvas.addEventListener("mousedown", () => (drawing = true));
+  canvas.addEventListener("mouseup", () => (drawing = false));
+  canvas.addEventListener("mouseout", () => (drawing = false));
+
+  canvas.addEventListener("mousemove", (e) => {
+    if (!drawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
+    ctx.fill();
+  });
+</script>
+
+
+
 </body>
 </html>

@@ -125,23 +125,36 @@
       title.innerText = section;
       sectionDiv.appendChild(title);
 
-      items.forEach(text => {
-        const row = document.createElement('div');
-        row.className = 'flex items-center justify-between border-b py-2';
+items.forEach((text, index) => {
+  const row = document.createElement('div');
+  row.className = 'flex items-center justify-between border-b py-2';
 
-        const label = document.createElement('label');
-        label.className = 'text-right ml-4';
-        label.innerText = text;
+  const label = document.createElement('label');
+  label.className = 'text-right ml-4';
+  label.innerText = text;
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'toggle toggle-success transform scale-175';
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.className = 'toggle toggle-success transform scale-125';
 
-        row.appendChild(label);
-        row.appendChild(checkbox);
+  // Assign a unique ID
+  const checkboxId = `${section}-${index}`;
+  checkbox.id = checkboxId;
 
-        sectionDiv.appendChild(row);
-      });
+  // Restore saved state
+  const saved = localStorage.getItem(checkboxId);
+  if (saved === 'true') checkbox.checked = true;
+
+  // Save on change
+  checkbox.addEventListener('change', () => {
+    localStorage.setItem(checkboxId, checkbox.checked);
+  });
+
+  row.appendChild(label);
+  row.appendChild(checkbox);
+
+  sectionDiv.appendChild(row);
+});
 
       container.appendChild(sectionDiv);
     });

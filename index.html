@@ -204,28 +204,25 @@ select.appendChild(placeholder);
   fileInput.accept = 'image/*';
   fileInput.className = 'mt-2';
 
-const previewWrapper = document.createElement('div');
-previewWrapper.className = 'mt-2 space-y-2';
+  const imgWrapper = document.createElement('div');
+imgWrapper.className = 'mt-2';
 
-// Create image preview
 const imgPreview = document.createElement('img');
-imgPreview.className = 'max-h-40 rounded border';
+imgPreview.className = 'max-h-40 rounded border cursor-pointer';
 imgPreview.alt = 'תמונה של הבעיה';
 imgPreview.style.display = 'none';
 
-// Create link to open image in full screen
-const link = document.createElement('a');
-link.target = '_blank';
-link.innerText = 'פתח תמונה';
-link.className = 'block text-blue-700 underline text-sm';
-link.style.display = 'none';
+const imgLink = document.createElement('a');
+imgLink.target = '_blank';
+imgLink.appendChild(imgPreview);
+imgLink.style.display = 'none';
 
 const savedImg = localStorage.getItem(checkboxId + '-img');
 if (savedImg) {
   imgPreview.src = savedImg;
+  imgLink.href = savedImg;
   imgPreview.style.display = 'block';
-  link.href = savedImg;
-  link.style.display = 'block';
+  imgLink.style.display = 'inline';
 }
 
 fileInput.addEventListener('change', (e) => {
@@ -234,21 +231,19 @@ fileInput.addEventListener('change', (e) => {
 
   const reader = new FileReader();
   reader.onload = () => {
-    const result = reader.result;
-    localStorage.setItem(checkboxId + '-img', result);
-    imgPreview.src = result;
+    const dataURL = reader.result;
+    localStorage.setItem(checkboxId + '-img', dataURL);
+    imgPreview.src = dataURL;
+    imgLink.href = dataURL;
     imgPreview.style.display = 'block';
-    link.href = result;
-    link.style.display = 'block';
+    imgLink.style.display = 'inline';
   };
   reader.readAsDataURL(file);
 });
 
-previewWrapper.appendChild(imgPreview);
-previewWrapper.appendChild(link);
+imgWrapper.appendChild(imgLink);
 row.appendChild(fileInput);
-row.appendChild(previewWrapper);
-
+row.appendChild(imgWrapper);
 
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];

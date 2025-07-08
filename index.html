@@ -349,7 +349,7 @@ container.appendChild(sectionDiv);
 <!-- Pin Modal -->
 <div id="pin-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-4 rounded-lg max-w-md w-full">
-    <h2 class="text-lg font-semibold mb-2">הערת פין</h2>
+    <h2 class="text-lg font-semibold mb-2">הערה</h2>
     <textarea id="pin-text" class="w-full h-24 p-2 border rounded" placeholder="כתוב כאן הערה..."></textarea>
     <div class="flex justify-between mt-4">
       <button onclick="deletePin()" class="px-3 py-1 bg-red-600 text-white rounded">🗑️ מחק</button>
@@ -382,8 +382,8 @@ container.appendChild(sectionDiv);
     pins.forEach((pin, index) => {
       const dot = document.createElement("div");
       dot.className = "pin-marker absolute rounded-full border-2 border-red-600 bg-white";
-      dot.style.width = "12px";
-      dot.style.height = "12px";
+      dot.style.width = "25px";
+      dot.style.height = "25px";
       dot.style.left = `${pin.x * canvas.clientWidth}px`;
       dot.style.top = `${pin.y * canvas.clientHeight}px`;
       dot.style.transform = "translate(-50%, -50%)";

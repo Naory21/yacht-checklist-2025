@@ -5,14 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>צ'ק ליסט נאור ומוקי 2025</title>
   <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
 </head>
 <body class="bg-blue-50 min-h-screen p-6 font-sans">
-  <h1 class="text-3xl font-bold text-center text-blue-900 mb-8">בדיקת יאכטה - לפקדה 2025</h1>
+
+  <h1 class="text-3xl font-bold text-center text-blue-900 mb-8">צ'קליסט בדיקת יאכטה⛵</h1>
+    <h2 class="text-1xl font-light text-center text-blue-900 mb-8">מוקי כהן, נאור אדרי</h1>
+
 
   <div class="max-w-4xl mx-auto space-y-8">
     <!-- JS will inject checklist sections here -->
   </div>
-
   <script>
     const checklist = {
       "מקרר": [
@@ -431,6 +435,95 @@ container.appendChild(sectionDiv);
 </script>
 
 
+
+
+
+
+
+
+
+<div class="max-w-4xl mx-auto my-12 flex justify-center gap-4">
+  <button onclick="clearForm()" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+    נקה טופס
+  </button>
+ <button onclick="exportToCSV()" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+  ייצוא לCSV
+</button>
+</div>
+
+<script>
+function clearForm() {
+  if (!confirm("האם אתה בטוח שברצונך לנקות את כל הנתונים?")) return;
+
+  // Remove everything stored
+  localStorage.clear();
+
+  // Reset form visually
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('input[type="text"]').forEach(input => input.value = '');
+  document.querySelectorAll('textarea').forEach(textarea => textarea.value = '');
+
+  // Reset status buttons
+  document.querySelectorAll('button').forEach(btn => {
+    btn.classList.remove('bg-red-500', 'text-white', 'bg-purple-500');
+    btn.classList.add('bg-red-200', 'text-red-900', 'bg-purple-200', 'text-purple-900');
+  });
+
+  // Hide issue inputs
+  document.querySelectorAll('input[placeholder="תאר את הבעיה"]').forEach(input => {
+    input.style.display = 'none';
+  });
+
+  // Clear canvas and pins
+  clearDrawing();
+  localStorage.removeItem("yacht_pins");
+  document.querySelectorAll('.pin-marker').forEach(p => p.remove());
+}
+function exportToPDF() {
+  const element = document.body;
+  const opt = {
+    margin:       0.5,
+    filename:     'checklist.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+}
+
+</script>
+<script>
+function exportToCSV() {
+  let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+  csvContent += "קטגוריה,משימה,בוצע,סטטוס,פירוט\n";
+
+  Object.entries(checklist).forEach(([section, items]) => {
+    items.forEach((item, index) => {
+      const checkboxId = `${section}-${index}`;
+      const checked = localStorage.getItem(checkboxId) === 'true' ? '✔️' : '';
+      const status = localStorage.getItem(checkboxId + '-status') || '';
+      const issue = localStorage.getItem(checkboxId + '-issue') || '';
+      const cleanItem = item.replace(/,/g, ''); // remove commas
+
+      csvContent += `"${section}","${cleanItem}","${checked}","${status}","${issue}"\n`;
+    });
+  });
+
+  // Add notes at the end
+  const notes = localStorage.getItem("yacht_notes") || "";
+  if (notes) {
+    csvContent += `"הערות חופשיות","","","","${notes.replace(/,/g, '')}"\n`;
+  }
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "checklist.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+</script>
 
 </body>
 </html>
